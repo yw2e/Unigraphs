@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIGRAPHS </title>
+</head>
+<body>
+    <h1 style="text-align: center;">UNIGRAPHS Matching Game</h1>
+    <p style="text-align: center;">Drag the graphs to match with their pairs.</p>
+
+    <div class="game-container">
+        <div id="left" class="match-items">
+            <div class="match-item" data-match="1">
+                <img src="ganesha.png" width="200" height="200" />
+            </div>
+            <div class="match-item" data-match="2">
+                <img src="murugan.png" width="200" height="200" />
+            </div>
+            <div class="match-item" data-match="3">
+                <img src="shiva.png"  width="200" height="200" />
+            </div>
+            <div class="match-item" data-match="4">
+                <img src="vishnu.png" width="200" height="200" />
+            </div>
+            <div class="match-item" data-match="5">
+                <img src="durga.png"    width="200" height="200"/>
+            </div>
+        </div>
+        <div id="right" class="match-targets">
+            <div class="match-target" data-match="2">
+                <img src="murugan_1.png" width="200" height="200" />
+            </div>
+            <div class="match-target" data-match="3">
+                <img src="shiva_1.png" width="200" height="200" />
+            </div>
+            <div class="match-target" data-match="1">
+                <img src="ganesha_1.png" width="200" height="200"/>
+            </div>
+            <div class="match-target" data-match="4">
+                <img src="vishnu_1.png"width="200" height="200" />
+            </div>
+            <div class="match-target" data-match="5">
+                <img src="durga_1.png"width="200" height="200" />
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">
+      <div id="desc"></div>
+    </div>
+</body>
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+    body {
+        font-family: "Poppins", sans-serif;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /*Game*/
+    .game-container {
+        display: flex;
+        justify-content: center;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 16px;
+        border-radius: 16px;
+        border: #E7E0EC solid 1px;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 8px 32px 0px;
+    }
+    .match-item, .match-target {
+        width: fit-content;
+        margin-left: 16px;
+        margin-right: 16px;
+        cursor: move;
+        cursor: -webkit-grabbing;
+        margin: 8px;
+        border: #E7E0EC solid 1px;
+        border-radius: 32px 16px;
+        padding: 8px;
+    }
+
+    .match-target {
+        border-radius: 16px 32px;
+    }
+
+    .match-item:hover, .match-item:focus, .match-item:active, .match-target:hover {
+        transition: border-radius 0.2s ease-in;
+        border-radius: 16px;
+    }
+
+    .on_swap {
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 8px 32px 0px;
+        background: linear-gradient(57deg, #5ed1af, #19b3bd);
+        transition: background-color 0.5s linear;
+        border-radius: 32px;
+        transition: 0.2s all ease-in-out;
+    }
+
+
+    /*Toast Error Message*/
+    #toast {
+        visibility: hidden;
+        width: fit-content;
+        height: fit-content;
+        margin: auto;
+        background: linear-gradient(315deg, #17f9f2 40%, #b0f9a9 74%);
+        color: black;
+        text-align: center;
+        border-radius: 16px;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        right: 0;
+        bottom: 32px;
+        font-size: 16px;
+        white-space: nowrap;
+    }
+    #toast #desc {
+        color: black;
+        font-weight: bold;
+        padding: 16px;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    #toast.show {
+        visibility: visible;
+        -webkit-animation: fadein 0.5s, stay 3s 1s, fadeout 0.5s 2.5s;
+        animation: fadein 0.5s, stay 3s 1s, fadeout 0.5s 4.5s;
+    }
+
+    @media only screen and (max-width: 950px) {
+        .game-container {
+            width: fit-content;
+            padding: 4px;
+            transform: scale(0.95);
+        }
+
+        .match-item, .match-target {
+            width: fit-content;
+            cursor: move;
+            cursor: -webkit-grabbing;
+            margin: 2px;
+            border: #E7E0EC solid 1px;
+            border-radius: 32px 16px;
+            padding: 4px;
+            transform: scale(0.95);
+        }
+
+
+    }
+</style>
+<!--Very Important. Without this script the game will not work. Please include this without fail!-->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
+<script type="text/javascript">
+    function randomize(id) {
+        var numbers = document.querySelector(`${id}`);
+        var list = Array.from(numbers.children);
+        var newlist;
+
+        list.sort(function (a, b) {
+            return -1 + Math.random() * 3; // -1, 0, or 1
+        });
+
+        while (numbers.children.length > 0) {
+            numbers.removeChild(numbers.children[0]);
+        }
+
+        list.forEach(function (el) {
+            numbers.appendChild(el);
+        });
+    }
+
+    randomize("#left");
+    randomize("#right");
+
+    function validate() {
+        let leftItems = document.querySelectorAll(".match-item");
+        let rightItems = document.querySelectorAll(".match-target");
+
+        let flag = true;
+
+        for(let i = 0; i < leftItems.length; i++) {
+            if(leftItems[i].getAttribute("data-match").toString() == rightItems[i].getAttribute("data-match").toString()) {
+                leftItems[i].style.backgroundColor = "#E6F4EA";
+                leftItems[i].style.border = "#0D652D 1px solid";
+                rightItems[i].style.backgroundColor = "#E6F4EA";
+                rightItems[i].style.border = "#0D652D 1px solid";
+            }
+            else {
+                leftItems[i].style.backgroundColor = "#F9DEDC";
+                leftItems[i].style.border = "red 1px solid";
+                rightItems[i].style.backgroundColor = "#F9DEDC";
+                rightItems[i].style.border = "red 1px solid";
+                flag = false;
+            }
+        }
+
+        if(flag) {
+            launch_toast("Congratulations Pleb!");
+            setTimeout(() => {
+                alert("Congratulations Pleb!");
+            }, 1500);
+        }
+    }
+
+    function launch_toast(message) {
+      document.querySelector("#desc").innerHTML = message;
+      var x = document.getElementById("toast");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 7000);
+    }
+
+    var matchItems = Sortable.create(document.getElementById('left'), {
+        animation: 150,
+        direction: 'vertical',
+        easing: "cubic-bezier(1, 0, 0, 1)",
+        group: {
+            name: 'match-items',
+            put: false,
+        },
+        swap: true,
+        swapClass: "on_swap",
+        onEnd: function (event) {
+            validate();
+        },
+    });
+
+    var matchTargets = Sortable.create(document.getElementById('right'), {
+        animation: 150,
+        direction: 'vertical',
+        easing: "cubic-bezier(1, 0, 0, 1)",
+        group: {
+            name: 'match-targets',
+            put: false,
+        },
+        swap: true,
+        swapClass: "on_swap",
+        onEnd: function (event) {
+            validate();
+        },
+    });
+</script>
+</html>
